@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Къщата на буквите</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Andika:ital,wght@0,400;0,700;1,400&family=Playwrite+GB+J:wght@300;400&family=Edu+SA+Beginner:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#E9F3FB;
+    --sky2:#DCEDF9;
+    --ink:#26334D;
+    --ink-soft:#5B6B8C;
+    --card:#FFFFFF;
+    --rasp:#E85D8A;
+    --rasp-dark:#C43F6D;
+    --sun:#FFC93C;
+    --leaf:#5BB974;
+    --blue:#4A90D9;
+    --lav:#A98BD4;
+    --line:#D5E4F0;
+    --r-lg:22px;
+    --r-md:16px;
+    --shadow:0 4px 14px rgba(38,51,77,.10);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  html,body{margin:0; padding:0;}
+  button{touch-action:manipulation;}
+  body{
+    font-family:'Baloo 2', 'Andika', sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, #FFF6DE 0, transparent 22%),
+      radial-gradient(circle at 85% 6%, #FDE9F1 0, transparent 20%),
+      linear-gradient(var(--sky), var(--sky2));
+    min-height:100vh;
+    color:var(--ink);
+    padding-bottom:calc(40px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:14px;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .home-btn{
+    border:none; background:var(--card); color:var(--ink);
+    font-family:inherit; font-weight:700; font-size:1rem;
+    padding:10px 16px; border-radius:999px; box-shadow:var(--shadow);
+    cursor:pointer; display:none; align-items:center; gap:6px;
+  }
+  .home-btn:active{transform:scale(.96);}
+  .stars-chip{
+    margin-left:auto; background:var(--card); border-radius:999px;
+    padding:10px 16px; font-weight:800; box-shadow:var(--shadow);
+    display:flex; align-items:center; gap:6px; font-size:1.05rem;
+  }
+
+  h1{
+    font-weight:800; font-size:clamp(1.7rem, 5vw, 2.6rem);
+    text-align:center; margin:6px 0 2px;
+  }
+  .subtitle{
+    text-align:center; color:var(--ink-soft); font-weight:600;
+    margin:0 0 16px; font-size:1.02rem;
+  }
+
+  /* ---------- info box ---------- */
+  .info-box{
+    background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:16px 18px; margin:0 0 16px; font-size:1.02rem; line-height:1.55;
+  }
+  .info-box .demo-pair{
+    display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:12px;
+  }
+  .demo-card{
+    background:var(--sky); border-radius:var(--r-md);
+    padding:10px 18px 8px; text-align:center; min-width:130px;
+  }
+  .demo-card .big{font-size:2.4rem; line-height:1.1;}
+  .demo-card .lbl{font-size:.82rem; font-weight:700; color:var(--ink-soft); margin-top:2px;}
+  .f-print{font-family:'Andika', sans-serif;}
+  .f-hand{font-family:'Playwrite GB J', cursive; font-weight:400;}
+  /* малко k — с прави чертички, като печатното */
+  .f-hand-plain{font-family:'Edu SA Beginner',cursive; font-weight:500;}
+
+  /* ---------- level toggle ---------- */
+  .level-row{display:flex; justify-content:center; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
+  .level-btn{
+    border:3px solid transparent; background:var(--card); color:var(--ink);
+    font-family:inherit; font-weight:700; font-size:1rem;
+    padding:10px 18px; border-radius:999px; box-shadow:var(--shadow); cursor:pointer;
+  }
+  .level-btn.active{border-color:var(--sun); background:#FFF6DE;}
+  .level-btn:active{transform:scale(.96);}
+
+  /* ---------- home doors ---------- */
+  .doors{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px;}
+  .door{
+    border:none; cursor:pointer; font-family:inherit; color:var(--ink);
+    background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:22px 16px 18px; text-align:center; position:relative; overflow:hidden;
+  }
+  .door::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:10px;
+  }
+  .door.d1::before{background:var(--rasp);}
+  .door.d2::before{background:var(--leaf);}
+  .door.d3::before{background:var(--blue);}
+  .door .emoji{font-size:2.6rem; display:block; margin-bottom:6px;}
+  .door .name{font-weight:800; font-size:1.25rem;}
+  .door .desc{color:var(--ink-soft); font-weight:600; font-size:.92rem; margin-top:4px; line-height:1.35;}
+  .door:active{transform:scale(.97);}
+
+  /* ---------- letter grid ---------- */
+  .letter-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:12px;
+  }
+  .house{
+    border:none; cursor:pointer; font-family:inherit; color:var(--ink);
+    background:transparent; padding:0; text-align:center;
+  }
+  .house .roof{
+    height:34px; clip-path:polygon(50% 0, 100% 100%, 0 100%);
+    display:flex; align-items:flex-end; justify-content:center;
+    font-weight:800; color:#fff; font-size:.85rem; padding-bottom:2px;
+  }
+  .house .body{
+    background:var(--card); border-radius:0 0 var(--r-md) var(--r-md);
+    box-shadow:var(--shadow); padding:8px 4px 10px;
+  }
+  .house .print-pair{font-family:'Andika',sans-serif; font-size:1.7rem; font-weight:700; line-height:1.15;}
+  .house .hand-pair{font-family:'Playwrite GB J',cursive; font-weight:400; font-size:1.15rem; color:var(--ink-soft); line-height:1.35;}
+  .house:active{transform:scale(.95);}
+
+  /* ---------- room ---------- */
+  .room-roof{
+    background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:12px; text-align:center; position:relative; margin-bottom:10px;
+    border-top:10px solid var(--rasp);
+  }
+  .room-roof .letter-big{
+    font-family:'Andika',sans-serif; font-weight:700;
+    font-size:clamp(2.4rem, 10vw, 3.6rem); line-height:1;
+  }
+  .roof-line{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:6px;}
+  .name-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    background:#FFF6DE; border-radius:999px; padding:6px 14px;
+    font-weight:800; font-size:1.05rem;
+  }
+  .say-btn{
+    border:none; cursor:pointer; font-family:inherit;
+    background:var(--rasp); color:#fff; font-weight:800; font-size:1.02rem;
+    padding:12px 22px; border-radius:999px; box-shadow:var(--shadow);
+    margin-top:12px; display:inline-flex; align-items:center; gap:8px;
+  }
+  .say-btn.small{margin-top:0; padding:9px 16px; font-size:.95rem;}
+  .say-btn:active{transform:scale(.96);}
+  .say-btn.alt{background:var(--blue);}
+
+  .forms-caption{
+    text-align:center; color:var(--ink-soft); font-weight:700;
+    font-size:.92rem; margin:0 4px 8px;
+  }
+
+  /* долни бутони за преход между буквите */
+  .letter-nav{display:flex; gap:10px; margin-top:14px;}
+  .nav-btn{
+    flex:1; border:none; cursor:pointer; font-family:inherit; color:#fff;
+    background:var(--blue); border-radius:var(--r-md); box-shadow:var(--shadow);
+    padding:12px 10px; display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .nav-btn:active{transform:scale(.97);}
+  .nav-btn .nav-word{font-weight:800; font-size:1rem;}
+  .nav-btn .nav-letter{font-family:'Andika',sans-serif; font-weight:700; font-size:1.5rem; line-height:1;}
+
+  .section-title{
+    font-weight:800; font-size:1.1rem; margin:12px 4px 8px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .hint-line{color:var(--ink-soft); font-weight:600; margin:-4px 4px 8px; font-size:.92rem;}
+
+  .windows{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px;}
+  .window-card{
+    background:var(--card); border-radius:var(--r-md); box-shadow:var(--shadow);
+    padding:10px 6px 8px; text-align:center; border:3px solid var(--line);
+  }
+  .window-card .glyph{font-size:3.2rem; line-height:1.28; padding-bottom:2px;}
+  .window-card.hand .glyph{font-size:3rem;}
+  .form-lbl{
+    display:inline-block; margin-top:8px; font-size:.8rem; font-weight:800;
+    background:var(--sky); color:var(--ink-soft);
+    border-radius:999px; padding:4px 12px;
+  }
+  .window-card.hand .form-lbl{background:#F3EBFB; color:#7B5EA7;}
+
+  .sound-card{
+    background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:12px; margin-bottom:10px;
+  }
+  .sound-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .ipa-badge{
+    background:var(--ink); color:#fff; font-weight:800;
+    border-radius:12px; padding:6px 14px; font-size:1.15rem;
+    font-family:'Andika',sans-serif;
+  }
+  .lvl2-badge{
+    background:var(--lav); color:#fff; font-weight:800; font-size:.78rem;
+    border-radius:999px; padding:4px 10px;
+  }
+  .sound-hint{font-weight:600; color:var(--ink-soft); font-size:.95rem; flex:1 1 180px;}
+  .word-chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+  .word-chip{
+    border:3px solid var(--line); background:var(--sky); cursor:pointer;
+    border-radius:var(--r-md); padding:10px 14px; font-family:'Andika',sans-serif;
+    font-size:1.25rem; display:flex; align-items:center; gap:8px; color:var(--ink);
+  }
+  .word-chip:active{transform:scale(.95);}
+  .word-chip .emo{font-size:1.6rem;}
+  .word-chip b{color:var(--rasp-dark); font-weight:700;}
+  .word-chip .spk{font-size:.95rem; opacity:.55;}
+
+  /* ---------- games ---------- */
+  .game-head{
+    background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:14px 18px; margin-bottom:14px; text-align:center;
+  }
+  .game-head .q{font-weight:800; font-size:1.2rem; line-height:1.35;}
+  .progress-dots{display:flex; justify-content:center; gap:6px; margin-top:10px; flex-wrap:wrap;}
+  .dot{width:12px; height:12px; border-radius:50%; background:var(--line);}
+  .dot.done{background:var(--sun);}
+  .dot.now{background:var(--rasp);}
+
+  .photo-frame{
+    background:linear-gradient(#FFF9EC,#FFF3D6); border:4px solid var(--sun);
+    border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:14px; margin-bottom:14px;
+  }
+  .photo-title{text-align:center; font-weight:800; margin-bottom:10px; font-size:1.05rem;}
+  .photo-slots{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  @media (max-width:520px){ .photo-slots{grid-template-columns:repeat(2,1fr);} }
+  .slot{
+    background:#fff; border:3px dashed #E8CE8F; border-radius:var(--r-md);
+    min-height:104px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:8px 4px;
+  }
+  .slot.filled{border-style:solid; border-color:var(--leaf); background:#F2FBF3;}
+  .slot .glyph{font-size:2.6rem; line-height:1.05;}
+  .slot .mini-lbl{font-size:.68rem; font-weight:800; color:var(--ink-soft); margin-top:4px; text-align:center;}
+  .slot .qmark{font-size:1.8rem; color:#E0C580;}
+
+  .pick-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px;}
+  .pick-card{
+    border:3px solid var(--line); background:var(--card); cursor:pointer;
+    border-radius:var(--r-md); box-shadow:var(--shadow);
+    padding:12px 6px 10px; text-align:center; font-family:inherit; color:var(--ink);
+  }
+  .pick-card .glyph{font-size:2.9rem; line-height:1.1;}
+  .pick-card:active{transform:scale(.95);}
+  .pick-card.gone{opacity:0; pointer-events:none; transform:scale(.5); transition:all .35s;}
+  .pick-card.right{border-color:var(--leaf); background:#F2FBF3;}
+  .pick-card.wrong{animation:shake .45s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);} 40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);} 80%{transform:translateX(6px);}
+  }
+
+  .listen-big{
+    text-align:center; margin-bottom:14px;
+  }
+  .listen-emoji{font-size:4.2rem; line-height:1.1; min-height:1.2em;}
+  .answers-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px;}
+
+  .feedback{
+    text-align:center; font-weight:800; font-size:1.25rem; min-height:1.7em; margin:12px 0;
+  }
+  .feedback.ok{color:var(--leaf);}
+  .feedback.no{color:var(--rasp-dark);}
+
+  .next-btn{
+    display:block; margin:10px auto 0; border:none; cursor:pointer;
+    background:var(--leaf); color:#fff; font-family:inherit; font-weight:800;
+    font-size:1.1rem; padding:14px 34px; border-radius:999px; box-shadow:var(--shadow);
+  }
+  .next-btn:active{transform:scale(.96);}
+  .hiddenEl{display:none !important;}
+
+  .final-card{
+    background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow);
+    padding:30px 20px; text-align:center;
+  }
+  .final-card .big-emo{font-size:4rem;}
+  .final-card h2{margin:10px 0 6px; font-size:1.6rem;}
+  .final-card p{color:var(--ink-soft); font-weight:600; margin:0 0 16px;}
+
+  .pop{animation:pop .4s;}
+  @keyframes pop{0%{transform:scale(.6);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+  .bounce{animation:bounce .6s;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}40%{transform:translateY(-14px);}}
+
+  /* ---------- mobile ---------- */
+  @media (max-width:600px){
+    .wrap{padding:10px;}
+    .letter-grid{grid-template-columns:repeat(3,1fr); gap:10px;}
+    .house .print-pair{font-size:1.5rem;}
+    .house .hand-pair{font-size:1rem;}
+    .windows{grid-template-columns:repeat(2,1fr); gap:8px;}
+    .window-card{padding:8px 4px 6px;}
+    .window-card .glyph{font-size:2.6rem; line-height:1.28;}
+    .pick-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
+    .pick-card{min-height:112px;}
+    .pick-card .glyph{font-size:2.6rem;}
+    .answers-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
+    .room-roof{padding:10px;}
+    .room-roof .letter-big{font-size:2.3rem;}
+    .say-btn{padding:14px 22px; font-size:1.05rem;}
+    .say-btn.small{padding:9px 14px; font-size:.92rem;}
+    .word-chip{padding:12px 14px;}
+    .nav-btn .nav-word{font-size:.92rem;}
+    .nav-btn .nav-letter{font-size:1.4rem;}
+    .doors{grid-template-columns:1fr;}
+    .info-box{padding:14px;}
+    .demo-card{min-width:110px; flex:1;}
+    .photo-slots{grid-template-columns:repeat(2,1fr);}
+    .listen-emoji{font-size:3.6rem;}
+  }
+  @media (max-width:360px){
+    .letter-grid{grid-template-columns:repeat(3,1fr); gap:8px;}
+    .house .roof{font-size:.72rem;}
+  }
+
+
+  /* --- побиране на стаята на един стандартен телефонен екран --- */
+  @media (max-width:600px){
+    .windows{grid-template-columns:repeat(4,1fr) !important; gap:6px !important;}
+    .window-card{padding:7px 2px 6px !important;}
+    .window-card .glyph{font-size:2rem; line-height:1.28;}
+    .window-card.hand .glyph{font-size:1.9rem !important;}
+    .form-lbl{font-size:.6rem !important; padding:3px 6px !important; margin-top:5px !important;}
+    .sound-hint{font-size:.9rem !important; flex-basis:140px !important;}
+  }
+  @media (max-width:600px) and (max-height:700px){
+    .room-roof .letter-big{font-size:2rem !important;}
+    .window-card .glyph{font-size:1.8rem; line-height:1.28;}
+    .window-card.hand .glyph{font-size:1.7rem !important;}
+    .section-title{font-size:1rem !important; margin:8px 4px 6px !important;}
+    .forms-caption{font-size:.85rem !important; margin-bottom:6px !important;}
+    .word-chip{padding:9px 12px !important; font-size:1.15rem !important;}
+    .nav-btn{padding:10px 8px !important;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+  .screen{display:none;}
+  .screen.active{display:block;}
+  button{user-select:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <button class="home-btn" id="btnHome">🏠 Начало</button>
+    <div class="stars-chip">⭐ <span id="starCount">0</span></div>
+  </div>
+
+  <!-- ================= HOME ================= -->
+  <section class="screen active" id="scrHome">
+    <h1>🏠 Къщата на буквите</h1>
+    <p class="subtitle">Всяка буква си има стая. Хайде да ги опознаем!</p>
+
+    <div class="info-box">
+      <b>Знаеш ли?</b> Всяка буква изглежда по два начина — така, както я виждаш
+      <b>в книжките</b>, и така, както я пишем с ръка <b>в тетрадките си</b>.
+      А освен това всяка буква си има <b>име</b> и <b>звук</b> — и те са различни неща!
+      <div class="demo-pair">
+        <div class="demo-card">
+          <div class="big f-print">A a</div>
+          <div class="lbl">📖 В книжките</div>
+        </div>
+        <div class="demo-card">
+          <div class="big f-hand">A a</div>
+          <div class="lbl">✏️ В тетрадката</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="level-row">
+      <button class="level-btn" id="lvl1Btn">⭐ Ниво 1 — основните звукове</button>
+      <button class="level-btn" id="lvl2Btn">🌟 Ниво 2 — всички тайни</button>
+    </div>
+
+    <div class="doors">
+      <button class="door d1" id="doorRooms">
+        <span class="emoji">🚪</span>
+        <span class="name">Стаите на буквите</span>
+        <div class="desc">Разгледай всяка буква — как изглежда и как звучи в думите</div>
+      </button>
+      <button class="door d2" id="doorFamily">
+        <span class="emoji">📸</span>
+        <span class="name">Семейна снимка</span>
+        <div class="desc">Събери четирите форми на една и съща буква</div>
+      </button>
+      <button class="door d3" id="doorListen">
+        <span class="emoji">👂</span>
+        <span class="name">Чуй и познай</span>
+        <div class="desc">Чуй име на буква или дума и намери правилната буква</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= LETTER GRID ================= -->
+  <section class="screen" id="scrGrid">
+    <h1>🚪 Избери стая</h1>
+    <p class="subtitle">Докосни буква, за да влезеш в стаята ѝ</p>
+    <div class="letter-grid" id="letterGrid"></div>
+  </section>
+
+  <!-- ================= ROOM ================= -->
+  <section class="screen" id="scrRoom">
+    <div class="room-roof" id="roomRoof">
+      <div class="letter-big f-print" id="roomLetterBig"></div>
+      <div class="roof-line">
+        <span class="name-chip">Име: <span id="roomName"></span></span>
+        <button class="say-btn small" id="roomSayName">🔊 Чуй името</button>
+      </div>
+    </div>
+
+    <div class="forms-caption">📖 = в книжките &nbsp;·&nbsp; ✏️ = в тетрадката</div>
+    <div class="windows" id="roomWindows"></div>
+
+    <div class="section-title">🗣️ В думите звучи така:</div>
+    <div class="hint-line" id="roomSoundIntro"></div>
+    <div id="roomSounds"></div>
+
+    <div class="letter-nav">
+      <button class="nav-btn" id="roomPrev">
+        <span class="nav-word">◀ Предишна</span>
+        <span class="nav-letter f-print" id="prevLetter"></span>
+      </button>
+      <button class="nav-btn" id="roomNext">
+        <span class="nav-word">Следваща ▶</span>
+        <span class="nav-letter f-print" id="nextLetter"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= GAME 1: FAMILY PHOTO ================= -->
+  <section class="screen" id="scrFamily">
+    <div class="game-head">
+      <div class="q" id="famQuestion"></div>
+      <div class="progress-dots" id="famDots"></div>
+    </div>
+
+    <div class="photo-frame">
+      <div class="photo-title">📸 Семейната снимка</div>
+      <div class="photo-slots" id="famSlots"></div>
+    </div>
+
+    <div class="feedback" id="famFeedback"></div>
+    <div class="pick-grid" id="famPicks"></div>
+    <button class="next-btn hiddenEl" id="famNext">Следваща буква →</button>
+  </section>
+
+  <!-- ================= GAME 2: LISTEN ================= -->
+  <section class="screen" id="scrListen">
+    <div class="game-head">
+      <div class="q" id="lisQuestion"></div>
+      <div class="progress-dots" id="lisDots"></div>
+    </div>
+
+    <div class="listen-big">
+      <div class="listen-emoji" id="lisEmoji"></div>
+      <button class="say-btn alt" id="lisReplay">🔊 Чуй пак</button>
+    </div>
+
+    <div class="feedback" id="lisFeedback"></div>
+    <div class="answers-grid" id="lisAnswers"></div>
+    <button class="next-btn hiddenEl" id="lisNext">Напред →</button>
+  </section>
+
+  <!-- ================= FINAL ================= -->
+  <section class="screen" id="scrFinal">
+    <div class="final-card">
+      <div class="big-emo" id="finEmo">🎉</div>
+      <h2 id="finTitle"></h2>
+      <p id="finText"></p>
+      <button class="say-btn" id="finAgain">🔁 Още веднъж</button>
+      <button class="say-btn alt" id="finHome">🏠 Начало</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ BULGARIAN DATA (JSON — пази кирилицата от JS кавички) ============ -->
+<script type="application/json" id="bgData">
+{
+  "ui": {
+    "formLabels": ["📖 В книжките — голяма", "📖 В книжките — малка", "✏️ В тетрадката — голяма", "✏️ В тетрадката — малка"],
+    "formLabelsShort": ["книжки • голяма", "книжки • малка", "тетрадка • голяма", "тетрадка • малка"],
+    "soundIntro": "Името ѝ е „{name}“, но в думите звучи така:",
+    "silentIpa": "🤫 тихо",
+    "good": ["Браво!", "Супер!", "Точно така!", "Ти си звезда!", "Чудесно!", "Страхотно!"],
+    "tryAgain": ["Опитай пак!", "Почти! Погледни внимателно.", "Хм, това е друга буква.", "Още мъничко!"],
+    "famQuestion": "Намери още {n} от семейството на тази буква:",
+    "famDone": "Семейството е събрано! Това е буквата {name}!",
+    "lisQName": "Чуй и познай: коя буква е това?",
+    "lisQSound": "Чуй думата. С коя буква започва?",
+    "finFamTitle": "Всички семейства са събрани!",
+    "finLisTitle": "Какви уши имаш само!",
+    "finText": "Спечели {n} нови звезди. ⭐",
+    "lvl2Note": "🌟 тайна от Ниво 2"
+  },
+  "letters": [
+    {"L":"A","n":"ей","sounds":[
+      {"lvl":1,"ipa":"а/е","hint":"Отваряме широко уста — звук между „а“ и „е“.","ex":[{"w":"[a]pple","e":"🍎"},{"w":"[a]nt","e":"🐜"}]},
+      {"lvl":2,"ipa":"ей","hint":"Понякога казва името си „ей“ — най-често, когато в края на думата има тихо E.","ex":[{"w":"c[a]ke","e":"🎂"},{"w":"sn[a]ke","e":"🐍"}]},
+      {"lvl":2,"ipa":"аа","hint":"А понякога е дълго „аа“.","ex":[{"w":"c[a]r","e":"🚗"},{"w":"st[a]r","e":"⭐"}]}
+    ]},
+    {"L":"B","n":"би","sounds":[
+      {"lvl":1,"ipa":"б","hint":"Като българското „б“.","ex":[{"w":"[b]all","e":"⚽"},{"w":"[b]anana","e":"🍌"}]}
+    ]},
+    {"L":"C","n":"си","sounds":[
+      {"lvl":1,"ipa":"к","hint":"Най-често звучи като „к“.","ex":[{"w":"[c]at","e":"🐱"},{"w":"[c]ow","e":"🐮"}]},
+      {"lvl":2,"ipa":"с","hint":"Но пред E, I и Y започва да съска като „с“!","ex":[{"w":"[c]ity","e":"🏙️"},{"w":"pen[c]il","e":"✏️"}]}
+    ]},
+    {"L":"D","n":"ди","sounds":[
+      {"lvl":1,"ipa":"д","hint":"Като „д“.","ex":[{"w":"[d]og","e":"🐶"},{"w":"[d]oor","e":"🚪"}]}
+    ]},
+    {"L":"E","n":"и","sounds":[
+      {"lvl":1,"ipa":"е","hint":"Като „е“.","ex":[{"w":"[e]gg","e":"🥚"},{"w":"[e]lephant","e":"🐘"}]},
+      {"lvl":2,"ipa":"ии","hint":"Понякога казва името си — дълго „ии“.","ex":[{"w":"sh[e]","e":"👧"},{"w":"h[e]","e":"👦"}]},
+      {"lvl":2,"silent":true,"hint":"Тихото E: в края на думата мълчи, но е вълшебно — кара гласната преди него да каже името си!","ex":[{"w":"cak[e]","e":"🎂"},{"w":"kit[e]","e":"🪁"}]}
+    ]},
+    {"L":"F","n":"еф","sounds":[
+      {"lvl":1,"ipa":"ф","hint":"Като „ф“.","ex":[{"w":"[f]ish","e":"🐟"},{"w":"[f]rog","e":"🐸"}]}
+    ]},
+    {"L":"G","n":"джи","sounds":[
+      {"lvl":1,"ipa":"г","hint":"Най-често звучи като „г“.","ex":[{"w":"[g]oat","e":"🐐"},{"w":"[g]arden","e":"🌷"}]},
+      {"lvl":2,"ipa":"дж","hint":"Но пред E, I и Y често става „дж“.","ex":[{"w":"[g]iraffe","e":"🦒"},{"w":"oran[g]e","e":"🍊"}]}
+    ]},
+    {"L":"H","n":"ейч","sounds":[
+      {"lvl":1,"ipa":"х","hint":"Леко издишване — по-меко от нашето „х“.","ex":[{"w":"[h]at","e":"🎩"},{"w":"[h]orse","e":"🐴"}]}
+    ]},
+    {"L":"I","n":"ай","sounds":[
+      {"lvl":1,"ipa":"и","hint":"Кратко „и“.","ex":[{"w":"[i]nsect","e":"🐛"},{"w":"p[i]g","e":"🐷"}]},
+      {"lvl":2,"ipa":"ай","hint":"Понякога казва името си „ай“.","ex":[{"w":"k[i]te","e":"🪁"},{"w":"[i]ce cream","e":"🍦"}]}
+    ]},
+    {"L":"J","n":"джей","sounds":[
+      {"lvl":1,"ipa":"дж","hint":"Като „дж“.","ex":[{"w":"[j]uice","e":"🧃"},{"w":"[j]am","e":"🍓"}]}
+    ]},
+    {"L":"K","n":"кей","sounds":[
+      {"lvl":1,"ipa":"к","hint":"Като „к“.","ex":[{"w":"[k]ey","e":"🔑"},{"w":"[k]ing","e":"🤴"}]}
+    ]},
+    {"L":"L","n":"ел","sounds":[
+      {"lvl":1,"ipa":"л","hint":"Като „л“.","ex":[{"w":"[l]ion","e":"🦁"},{"w":"[l]emon","e":"🍋"}]}
+    ]},
+    {"L":"M","n":"ем","sounds":[
+      {"lvl":1,"ipa":"м","hint":"Като „м“.","ex":[{"w":"[m]oon","e":"🌙"},{"w":"[m]ouse","e":"🐭"}]}
+    ]},
+    {"L":"N","n":"ен","sounds":[
+      {"lvl":1,"ipa":"н","hint":"Като „н“.","ex":[{"w":"[n]ose","e":"👃"},{"w":"[n]est","e":"🪺"}]}
+    ]},
+    {"L":"O","n":"оу","sounds":[
+      {"lvl":1,"ipa":"о","hint":"Кратко „о“.","ex":[{"w":"[o]ctopus","e":"🐙"},{"w":"f[o]x","e":"🦊"}]},
+      {"lvl":2,"ipa":"оу","hint":"Понякога казва името си „оу“.","ex":[{"w":"n[o]se","e":"👃"},{"w":"r[o]se","e":"🌹"}]}
+    ]},
+    {"L":"P","n":"пи","sounds":[
+      {"lvl":1,"ipa":"п","hint":"Като „п“.","ex":[{"w":"[p]en","e":"🖊️"},{"w":"[p]izza","e":"🍕"}]}
+    ]},
+    {"L":"Q","n":"кю","sounds":[
+      {"lvl":1,"ipa":"кў","hint":"Почти винаги върви заедно с U и звучи като „куа“.","ex":[{"w":"[q]ueen","e":"👑"},{"w":"[q]uestion","e":"❓"}]}
+    ]},
+    {"L":"R","n":"ар","sounds":[
+      {"lvl":1,"ipa":"р","hint":"Меко „р“ — езикът не трепери като в българското.","ex":[{"w":"[r]abbit","e":"🐰"},{"w":"[r]ain","e":"🌧️"}]}
+    ]},
+    {"L":"S","n":"ес","sounds":[
+      {"lvl":1,"ipa":"с","hint":"Като „с“.","ex":[{"w":"[s]un","e":"☀️"},{"w":"[s]tar","e":"⭐"}]},
+      {"lvl":2,"ipa":"з","hint":"Между гласни често забръмчава като „з“.","ex":[{"w":"no[s]e","e":"👃"},{"w":"chee[s]e","e":"🧀"}]}
+    ]},
+    {"L":"T","n":"ти","sounds":[
+      {"lvl":1,"ipa":"т","hint":"Като „т“.","ex":[{"w":"[t]iger","e":"🐯"},{"w":"[t]omato","e":"🍅"}]}
+    ]},
+    {"L":"U","n":"ю","sounds":[
+      {"lvl":1,"ipa":"а","hint":"Кратък звук като бързо „а“.","ex":[{"w":"[u]mbrella","e":"☂️"},{"w":"b[u]s","e":"🚌"}]},
+      {"lvl":2,"ipa":"ю","hint":"Понякога казва името си „ю“.","ex":[{"w":"[u]niform","e":"🎽"},{"w":"m[u]sic","e":"🎵"}]}
+    ]},
+    {"L":"V","n":"ви","sounds":[
+      {"lvl":1,"ipa":"в","hint":"Като „в“.","ex":[{"w":"[v]iolin","e":"🎻"},{"w":"[v]an","e":"🚐"}]}
+    ]},
+    {"L":"W","n":"дабъл ю","sounds":[
+      {"lvl":1,"ipa":"ў","hint":"Устните се закръглят като за „у“ — „ў“.","ex":[{"w":"[w]ater","e":"💧"},{"w":"[w]indow","e":"🪟"}]}
+    ]},
+    {"L":"X","n":"екс","sounds":[
+      {"lvl":1,"ipa":"кс","hint":"Като „кс“ — обикновено в края на думата.","ex":[{"w":"bo[x]","e":"📦"},{"w":"fo[x]","e":"🦊"}]}
+    ]},
+    {"L":"Y","n":"уай","sounds":[
+      {"lvl":1,"ipa":"й","hint":"В началото на думата — като „й“.","ex":[{"w":"[y]ellow","e":"💛"},{"w":"[y]o-yo","e":"🪀"}]},
+      {"lvl":2,"ipa":"ай","hint":"В края на кратки думи — „ай“.","ex":[{"w":"fl[y]","e":"🪰"},{"w":"sk[y]","e":"🌌"}]},
+      {"lvl":2,"ipa":"и","hint":"В края на по-дълги думи — „и“.","ex":[{"w":"happ[y]","e":"😊"},{"w":"bab[y]","e":"👶"}]}
+    ]},
+    {"L":"Z","n":"зед","sounds":[
+      {"lvl":1,"ipa":"з","hint":"Като „з“ — бръмчи като пчеличка.","ex":[{"w":"[z]ebra","e":"🦓"},{"w":"[z]oo","e":"🐒"}]}
+    ]}
+  ]
+}
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("bgData").textContent);
+  var UI = DATA.ui;
+  var LETTERS = DATA.letters;
+
+  /* ---------- state ---------- */
+  var level = parseInt(localStorage.getItem("lh_level") || "1", 10);
+  var stars = parseInt(localStorage.getItem("lh_stars") || "0", 10);
+  var currentRoom = 0;
+
+  /* ---------- helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+  function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+  function fmt(tpl, map){
+    return tpl.replace(/\{(\w+)\}/g, function(_, k){ return map[k]; });
+  }
+  function addStars(n){
+    stars += n;
+    localStorage.setItem("lh_stars", String(stars));
+    var el = $("starCount");
+    el.textContent = stars;
+    el.parentNode.classList.remove("pop");
+    void el.parentNode.offsetWidth;
+    el.parentNode.classList.add("pop");
+  }
+
+  /* ---------- TTS (British preference) ---------- */
+  var enVoice = null;
+  function pickVoice(){
+    var voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    var prefs = ["Daniel","Kate","Serena","Arthur"];
+    for(var i=0;i<prefs.length;i++){
+      for(var j=0;j<voices.length;j++){
+        if(voices[j].name.indexOf(prefs[i]) !== -1 && voices[j].lang.indexOf("en") === 0){
+          enVoice = voices[j]; return;
+        }
+      }
+    }
+    for(var k=0;k<voices.length;k++){
+      if(voices[k].lang === "en-GB"){ enVoice = voices[k]; return; }
+    }
+    for(var m=0;m<voices.length;m++){
+      if(voices[m].lang.indexOf("en") === 0){ enVoice = voices[m]; return; }
+    }
+  }
+  if(window.speechSynthesis){
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice;
+  }
+  function speak(text, rate){
+    if(!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-GB";
+    if(enVoice) u.voice = enVoice;
+    u.rate = rate || 0.85;
+    speechSynthesis.speak(u);
+  }
+  function speakName(letter){ speak(letter, 0.8); }
+  function speakWord(word){ speak(word, 0.8); }
+
+  /* ---------- word rendering ---------- */
+  function cleanWord(w){ return w.replace(/[\[\]]/g, ""); }
+  function wordHTML(w){
+    return w.replace(/\[([^\]]+)\]/g, "<b>$1</b>");
+  }
+
+  /* ---------- forms ---------- */
+  /* 0 = print upper, 1 = print lower, 2 = hand upper, 3 = hand lower */
+  /* всички ръкописни букви са в британския училищен шрифт Playwrite GB */
+  function glyphFor(letter, form){
+    var ch = (form === 0 || form === 2) ? letter : letter.toLowerCase();
+    var cls;
+    if(form < 2){ cls = "f-print"; }
+    else if(ch === "k"){ cls = "f-hand-plain"; }   /* k като печатното */
+    else { cls = "f-hand"; }
+    return { ch: ch, cls: cls };
+  }
+  function similarLetters(L){
+    var map = {
+      "B":["D","P","R","H"], "D":["B","P","Q","O"], "P":["Q","B","D","R"],
+      "Q":["P","B","D","G","O"], "M":["N","W","U"], "N":["M","U","R","H"],
+      "U":["N","V","W","O"], "I":["L","J","T"], "L":["I","T","J","K"],
+      "J":["I","G","Y","L"], "C":["O","E","G"], "E":["C","O","F"],
+      "O":["C","Q","D","U"], "A":["O","E","C"], "G":["Q","Y","J","C"],
+      "V":["W","U","Y"], "W":["V","M","U"], "F":["T","E","L"],
+      "T":["F","L","I","J"], "K":["X","H","L"], "H":["N","B","K","M"],
+      "R":["N","M","P","B"], "S":["Z","C"], "Z":["S","N"],
+      "X":["K","Y","Z"], "Y":["G","J","V","X"]
+    };
+    return map[L] || [];
+  }
+
+  /* ---------- screens ---------- */
+  var screens = ["scrHome","scrGrid","scrRoom","scrFamily","scrListen","scrFinal"];
+  function show(id){
+    screens.forEach(function(s){ $(s).classList.toggle("active", s === id); });
+    $("btnHome").style.display = (id === "scrHome") ? "none" : "inline-flex";
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    window.scrollTo(0,0);
+  }
+  $("btnHome").addEventListener("click", function(){ show("scrHome"); });
+
+  /* ---------- level toggle ---------- */
+  function renderLevel(){
+    $("lvl1Btn").classList.toggle("active", level === 1);
+    $("lvl2Btn").classList.toggle("active", level === 2);
+  }
+  $("lvl1Btn").addEventListener("click", function(){ level = 1; localStorage.setItem("lh_level","1"); renderLevel(); });
+  $("lvl2Btn").addEventListener("click", function(){ level = 2; localStorage.setItem("lh_level","2"); renderLevel(); });
+  renderLevel();
+  $("starCount").textContent = stars;
+
+  /* ================= LETTER GRID ================= */
+  var roofColors = ["#E85D8A","#5BB974","#4A90D9","#FFC93C","#A98BD4"];
+  function buildGrid(){
+    var grid = $("letterGrid");
+    grid.innerHTML = "";
+    LETTERS.forEach(function(item, idx){
+      var lo = item.L.toLowerCase();
+      var gu = glyphFor(item.L, 2), gl = glyphFor(item.L, 3);
+      var handUp = '<span class="' + gu.cls + '">' + gu.ch + '</span>';
+      var handLo = '<span class="' + gl.cls + '">' + gl.ch + '</span>';
+      var b = document.createElement("button");
+      b.className = "house";
+      b.innerHTML =
+        '<div class="roof" style="background:' + roofColors[idx % roofColors.length] + '">' + item.n + '</div>' +
+        '<div class="body">' +
+          '<div class="print-pair">' + item.L + " " + lo + '</div>' +
+          '<div class="hand-pair">' + handUp + " " + handLo + '</div>' +
+        '</div>';
+      b.addEventListener("click", function(){ openRoom(idx); });
+      grid.appendChild(b);
+    });
+  }
+  buildGrid();
+  $("doorRooms").addEventListener("click", function(){ show("scrGrid"); });
+
+  /* ================= ROOM ================= */
+  function openRoom(idx){
+    currentRoom = (idx + LETTERS.length) % LETTERS.length;
+    var item = LETTERS[currentRoom];
+    $("roomRoof").style.borderTopColor = roofColors[currentRoom % roofColors.length];
+    $("roomLetterBig").textContent = item.L + " " + item.L.toLowerCase();
+    $("roomName").textContent = "„" + item.n + "“";
+    $("roomSoundIntro").textContent = fmt(UI.soundIntro, {name: item.n});
+
+    var pi = (currentRoom - 1 + LETTERS.length) % LETTERS.length;
+    var ni = (currentRoom + 1) % LETTERS.length;
+    $("prevLetter").textContent = LETTERS[pi].L + " " + LETTERS[pi].L.toLowerCase();
+    $("nextLetter").textContent = LETTERS[ni].L + " " + LETTERS[ni].L.toLowerCase();
+
+    /* windows */
+    var w = $("roomWindows");
+    w.innerHTML = "";
+    for(var f=0; f<4; f++){
+      var g = glyphFor(item.L, f);
+      var card = document.createElement("div");
+      card.className = "window-card" + (f >= 2 ? " hand" : "");
+      card.innerHTML =
+        '<div class="glyph ' + g.cls + '">' + g.ch + '</div>' +
+        '<span class="form-lbl">' + UI.formLabels[f] + '</span>';
+      w.appendChild(card);
+    }
+
+    /* sounds */
+    var s = $("roomSounds");
+    s.innerHTML = "";
+    item.sounds.forEach(function(sound){
+      if(level === 1 && sound.lvl > 1) return;
+      var card = document.createElement("div");
+      card.className = "sound-card";
+      var ipa = sound.silent ? UI.silentIpa : "„" + sound.ipa + "“";
+      var head =
+        '<div class="sound-head">' +
+          '<span class="ipa-badge">' + ipa + '</span>' +
+          (sound.lvl === 2 ? '<span class="lvl2-badge">' + UI.lvl2Note + '</span>' : '') +
+          '<span class="sound-hint">' + sound.hint + '</span>' +
+        '</div>';
+      var chips = '<div class="word-chips">';
+      sound.ex.forEach(function(ex){
+        chips +=
+          '<button class="word-chip" data-word="' + cleanWord(ex.w) + '">' +
+            '<span class="emo">' + ex.e + '</span>' +
+            '<span>' + wordHTML(ex.w) + '</span>' +
+            '<span class="spk">🔊</span>' +
+          '</button>';
+      });
+      chips += '</div>';
+      card.innerHTML = head + chips;
+      s.appendChild(card);
+    });
+    s.querySelectorAll(".word-chip").forEach(function(btn){
+      btn.addEventListener("click", function(){ speakWord(btn.getAttribute("data-word")); });
+    });
+
+    show("scrRoom");
+    speakName(item.L);
+  }
+  $("roomSayName").addEventListener("click", function(){ speakName(LETTERS[currentRoom].L); });
+  $("roomPrev").addEventListener("click", function(){ openRoom(currentRoom - 1); });
+  $("roomNext").addEventListener("click", function(){ openRoom(currentRoom + 1); });
+
+  /* ================= GAME 1: FAMILY PHOTO ================= */
+  var FAM_ROUNDS = 8;
+  var fam = null;
+
+  function famStart(){
+    var order = shuffle(LETTERS.map(function(_, i){ return i; })).slice(0, FAM_ROUNDS);
+    fam = { order: order, round: 0, earned: 0 };
+    famRound();
+    show("scrFamily");
+  }
+
+  function famRound(){
+    var idx = fam.order[fam.round];
+    var item = LETTERS[idx];
+    var forms = shuffle([0,1,2,3]);
+    var shownForm = forms[0];
+    var needed = forms.slice(1);
+
+    fam.letter = item.L;
+    fam.needed = {};
+    needed.forEach(function(f){ fam.needed[f] = true; });
+    fam.left = 3;
+
+    $("famQuestion").textContent = fmt(UI.famQuestion, {n: 3});
+    $("famFeedback").textContent = "";
+    $("famFeedback").className = "feedback";
+    $("famNext").classList.add("hiddenEl");
+
+    /* dots */
+    var dots = $("famDots");
+    dots.innerHTML = "";
+    for(var d=0; d<FAM_ROUNDS; d++){
+      var dot = document.createElement("span");
+      dot.className = "dot" + (d < fam.round ? " done" : (d === fam.round ? " now" : ""));
+      dots.appendChild(dot);
+    }
+
+    /* slots: slot 0 = shown form */
+    var slots = $("famSlots");
+    slots.innerHTML = "";
+    fam.slotByForm = {};
+    var orderForSlots = [shownForm].concat(needed);
+    orderForSlots.forEach(function(f, i){
+      var slot = document.createElement("div");
+      slot.className = "slot" + (i === 0 ? " filled" : "");
+      if(i === 0){
+        var g = glyphFor(item.L, f);
+        slot.innerHTML = '<div class="glyph ' + g.cls + '">' + g.ch + '</div>' +
+                         '<div class="mini-lbl">' + UI.formLabelsShort[f] + '</div>';
+      } else {
+        slot.innerHTML = '<div class="qmark">?</div>';
+      }
+      slots.appendChild(slot);
+      fam.slotByForm[f] = slot;
+    });
+
+    /* pick cards: 3 siblings + 5 distractors */
+    var cards = [];
+    needed.forEach(function(f){ cards.push({ letter: item.L, form: f, good: true }); });
+    var pool = similarLetters(item.L).slice();
+    LETTERS.forEach(function(o){
+      if(o.L !== item.L && pool.indexOf(o.L) === -1) pool.push(o.L);
+    });
+    /* first similar letters, then random fill */
+    var distractors = pool.slice(0, 3).concat(shuffle(pool.slice(3)).slice(0, 2));
+    distractors.forEach(function(L){
+      cards.push({ letter: L, form: Math.floor(Math.random()*4), good: false });
+    });
+
+    var picks = $("famPicks");
+    picks.innerHTML = "";
+    shuffle(cards).forEach(function(c){
+      var g = glyphFor(c.letter, c.form);
+      var b = document.createElement("button");
+      b.className = "pick-card";
+      b.innerHTML = '<div class="glyph ' + g.cls + '">' + g.ch + '</div>' +
+                    '<span class="form-lbl">' + UI.formLabelsShort[c.form] + '</span>';
+      b.addEventListener("click", function(){ famPick(b, c); });
+      picks.appendChild(b);
+    });
+  }
+
+  function famPick(btn, c){
+    var fb = $("famFeedback");
+    if(c.good && fam.needed[c.form]){
+      fam.needed[c.form] = false;
+      fam.left--;
+      fam.earned++;
+      addStars(1);
+      btn.classList.add("right");
+      setTimeout(function(){ btn.classList.add("gone"); }, 200);
+      var slot = fam.slotByForm[c.form];
+      var g = glyphFor(c.letter, c.form);
+      slot.className = "slot filled pop";
+      slot.innerHTML = '<div class="glyph ' + g.cls + '">' + g.ch + '</div>' +
+                       '<div class="mini-lbl">' + UI.formLabelsShort[c.form] + '</div>';
+      if(fam.left > 0){
+        fb.textContent = rand(UI.good) + " " + fmt(UI.famQuestion, {n: fam.left});
+        fb.className = "feedback ok";
+      } else {
+        var item = LETTERS.filter(function(x){ return x.L === fam.letter; })[0];
+        fb.textContent = "🎉 " + fmt(UI.famDone, {name: "„" + item.n + "“"});
+        fb.className = "feedback ok bounce";
+        speakName(fam.letter);
+        document.querySelectorAll("#famPicks .pick-card").forEach(function(p){
+          p.style.pointerEvents = "none";
+        });
+        fam.round++;
+        if(fam.round < FAM_ROUNDS){
+          $("famNext").classList.remove("hiddenEl");
+        } else {
+          setTimeout(function(){ finish("fam", fam.earned); }, 1200);
+        }
+      }
+    } else {
+      btn.classList.remove("wrong");
+      void btn.offsetWidth;
+      btn.classList.add("wrong");
+      fb.textContent = rand(UI.tryAgain);
+      fb.className = "feedback no";
+    }
+  }
+  $("famNext").addEventListener("click", famRound);
+  $("doorFamily").addEventListener("click", famStart);
+
+  /* ================= GAME 2: LISTEN ================= */
+  var LIS_ROUNDS = 10;
+  var lis = null;
+
+  /* letters with a level-1 example word that STARTS with the letter */
+  function startWordFor(item){
+    var s = item.sounds[0];
+    for(var i=0;i<s.ex.length;i++){
+      if(s.ex[i].w.indexOf("[") === 0){ return s.ex[i]; }
+    }
+    return null;
+  }
+  /* letters that sound alike at word start — do not offer as distractors */
+  var soundAlike = {
+    "C":["K","S","Q"], "K":["C","Q"], "Q":["K","C","W"],
+    "G":["J"], "J":["G"], "S":["C","Z"], "Z":["S"],
+    "Y":["J","I"], "I":["E","Y"], "E":["A","I"], "A":["E","U"],
+    "U":["A","O"], "W":["V","U"], "V":["W"]
+  };
+
+  function lisStart(){
+    var rounds = [];
+    var nameLetters = shuffle(LETTERS.map(function(x){ return x.L; }));
+    var soundLetters = shuffle(LETTERS.filter(function(x){ return startWordFor(x); })
+                                      .map(function(x){ return x.L; }));
+    for(var i=0; i<LIS_ROUNDS; i++){
+      if(i % 2 === 0){
+        rounds.push({ type: "name", L: nameLetters[i % nameLetters.length] });
+      } else {
+        rounds.push({ type: "sound", L: soundLetters[i % soundLetters.length] });
+      }
+    }
+    lis = { rounds: shuffle(rounds), i: 0, earned: 0, locked: false };
+    lisRound();
+    show("scrListen");
+  }
+
+  function lisFind(L){
+    return LETTERS.filter(function(x){ return x.L === L; })[0];
+  }
+
+  function lisRound(){
+    var r = lis.rounds[lis.i];
+    var item = lisFind(r.L);
+    lis.locked = false;
+    lis.firstTry = true;
+
+    $("lisFeedback").textContent = "";
+    $("lisFeedback").className = "feedback";
+    $("lisNext").classList.add("hiddenEl");
+
+    var dots = $("lisDots");
+    dots.innerHTML = "";
+    for(var d=0; d<LIS_ROUNDS; d++){
+      var dot = document.createElement("span");
+      dot.className = "dot" + (d < lis.i ? " done" : (d === lis.i ? " now" : ""));
+      dots.appendChild(dot);
+    }
+
+    if(r.type === "name"){
+      $("lisQuestion").textContent = UI.lisQName;
+      $("lisEmoji").textContent = "👂";
+      lis.say = function(){ speakName(r.L); };
+    } else {
+      var ex = startWordFor(item);
+      $("lisQuestion").textContent = UI.lisQSound;
+      $("lisEmoji").textContent = ex.e;
+      lis.say = function(){ speakWord(cleanWord(ex.w)); };
+    }
+
+    /* answer options */
+    var banned = (soundAlike[r.L] || []);
+    var others = LETTERS.map(function(x){ return x.L; }).filter(function(L){
+      return L !== r.L && (r.type === "name" || banned.indexOf(L) === -1);
+    });
+    var opts = shuffle([r.L].concat(shuffle(others).slice(0, 3)));
+
+    var box = $("lisAnswers");
+    box.innerHTML = "";
+    opts.forEach(function(L){
+      var form = (level === 2) ? Math.floor(Math.random()*4) : (Math.random() < 0.5 ? 0 : 1);
+      var g = glyphFor(L, form);
+      var b = document.createElement("button");
+      b.className = "pick-card";
+      b.innerHTML = '<div class="glyph ' + g.cls + '">' + g.ch + '</div>' +
+                    (level === 2 ? '<span class="form-lbl">' + UI.formLabelsShort[form] + '</span>' : '');
+      b.addEventListener("click", function(){ lisPick(b, L, r); });
+      box.appendChild(b);
+    });
+
+    lis.say();
+  }
+
+  function lisPick(btn, L, r){
+    if(lis.locked) return;
+    var fb = $("lisFeedback");
+    if(L === r.L){
+      lis.locked = true;
+      btn.classList.add("right","pop");
+      if(lis.firstTry){ lis.earned++; addStars(1); }
+      fb.textContent = rand(UI.good);
+      fb.className = "feedback ok";
+      var item = lisFind(r.L);
+      if(r.type === "sound"){ speakName(r.L); }
+      lis.i++;
+      if(lis.i < LIS_ROUNDS){
+        $("lisNext").classList.remove("hiddenEl");
+      } else {
+        setTimeout(function(){ finish("lis", lis.earned); }, 1100);
+      }
+    } else {
+      lis.firstTry = false;
+      btn.classList.remove("wrong");
+      void btn.offsetWidth;
+      btn.classList.add("wrong");
+      fb.textContent = rand(UI.tryAgain);
+      fb.className = "feedback no";
+      lis.say();
+    }
+  }
+  $("lisReplay").addEventListener("click", function(){ if(lis) lis.say(); });
+  $("lisNext").addEventListener("click", lisRound);
+  $("doorListen").addEventListener("click", lisStart);
+
+  /* ================= FINAL ================= */
+  var lastGame = null;
+  function finish(game, earned){
+    lastGame = game;
+    $("finEmo").textContent = (earned >= 8) ? "🏆" : "🎉";
+    $("finTitle").textContent = (game === "fam") ? UI.finFamTitle : UI.finLisTitle;
+    $("finText").textContent = fmt(UI.finText, {n: earned});
+    show("scrFinal");
+  }
+  $("finAgain").addEventListener("click", function(){
+    if(lastGame === "fam") famStart(); else lisStart();
+  });
+  $("finHome").addEventListener("click", function(){ show("scrHome"); });
+
+  /* ================= ПРЕКИ ЛИНКОВЕ ================= */
+  /* ...#stai → Стаите на буквите | ...#snimka → Семейна снимка | ...#chuj → Чуй и познай */
+  function openFromHash(){
+    var h = (location.hash || "").replace(/[^a-z]/gi, "").toLowerCase();
+    if(h === "stai")        { show("scrGrid"); }
+    else if(h === "snimka") { famStart(); }
+    else if(h === "chuj")   { lisStart(); }
+  }
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+
+})();
+</script>
+</body>
+</html>
